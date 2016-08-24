@@ -19,9 +19,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    #url(r'^hives/', include('hives.urls')),
-    #url(r'^inspection/', include('hives.urls')),
     url(r'^', include('hives.urls')),
     url(r'^admin/', admin.site.urls),
     url(r'^filer/', include('filer.urls')),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]
