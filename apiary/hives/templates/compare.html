@@ -9,10 +9,20 @@
     <div class="col-md-6">
     <h1>#{{ inspection_a.id }}</h1>
     <h3>{{ inspection_a.timestamp }}</h3>
+    <ul>
+      {% for note in inspection_a.list_notes %}
+      <li>{{ note }}</li>
+      {% endfor %}
+    </ul>
     </div>
     <div class="col-md-6 text-right">
     <h1>#{{ inspection_b.id }}</h1>
     <h3>{{ inspection_b.timestamp }}</h3>
+    <ul>
+      {% for note in inspection_b.list_notes %}
+      <li>{{ note }}</li>
+      {% endfor %}
+    </ul>
     </div>
 </div>
 

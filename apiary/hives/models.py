@@ -56,6 +56,9 @@ class Inspection(models.Model):
                 ]
         return pairs
 
+    def list_notes(self):
+        return self.notes.split("\n")
+
 class InspectionFrame(models.Model):
     inspection = models.ForeignKey(Inspection, on_delete=models.PROTECT)
     frame = models.ForeignKey(Frame, on_delete=models.PROTECT)
