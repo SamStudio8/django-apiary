@@ -25,7 +25,7 @@ class Frame(models.Model):
 
 class Inspection(models.Model):
     hive = models.ForeignKey(Hive, on_delete=models.PROTECT)
-    timestamp = models.DateTimeField(auto_now_add=True)
+    timestamp = models.DateTimeField()
     #weather
     #report
 
