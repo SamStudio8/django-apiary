@@ -23,16 +23,14 @@
 <div class="row">
     <div class="col-md-6 text-center">
         {% if pair.0 %}
-        <img src="{% thumbnail pair.0.img_front 600x400 crop %}" alt="" />
-        <img src="{% thumbnail pair.0.img_back 600x400 crop %}" alt="" />
-        <p>{{ pair.0.frame.note }}</p>
+        <img src="{% thumbnail pair.0.img_front 525x350 crop %}" alt="" />
+        <img src="{% thumbnail pair.0.img_back 525x350 crop %}" alt="" />
         {% endif %}
     </div>
     <div class="col-md-6 text-center">
         {% if pair.1 %}
-        <img src="{% thumbnail pair.1.img_front 600x400 crop %}" alt="" />
-        <img src="{% thumbnail pair.1.img_back 600x400 crop %}" alt="" />
-        <p>{{ pair.1.frame.note }}</p>
+        <img src="{% thumbnail pair.1.img_front 525x350 crop %}" alt="" />
+        <img src="{% thumbnail pair.1.img_back 525x350 crop %}" alt="" />
         {% endif %}
     </div>
 </div>
