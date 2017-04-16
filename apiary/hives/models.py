@@ -32,6 +32,29 @@ class Inspection(models.Model):
     def __str__(self):
         return "%s: %s" % (self.hive.name, self.timestamp.date())
 
+    def get_frames_rname(self):
+        return self.inspectionframe_set.order_by("frame__code")
+
+    @staticmethod
+    def pair_frames(inspection_a, inspection_b):
+        pairs = {}
+        for iframe in inspection_a.get_frames_rname():
+            icode = iframe.frame.code
+            pairs[icode] = [
+                iframe,
+                None
+            ]
+        for iframe in inspection_b.get_frames_rname():
+            icode = iframe.frame.code
+            if icode in pairs:
+                pairs[icode][1] = iframe
+            else:
+                pairs[icode] = [
+                    None,
+                    iframe
+                ]
+        return pairs
+
 class InspectionFrame(models.Model):
     inspection = models.ForeignKey(Inspection, on_delete=models.PROTECT)
     frame = models.ForeignKey(Frame, on_delete=models.PROTECT)

@@ -13,3 +13,14 @@ def list(request, hive_id):
 def detail(request, inspection_id):
     inspection = get_object_or_404(Inspection, pk=inspection_id)
     return render(request, 'detail.html', {'inspection': inspection})
+
+def compare(request, inspection_id_a, inspection_id_b):
+    inspection_a = get_object_or_404(Inspection, pk=inspection_id_a)
+    inspection_b = get_object_or_404(Inspection, pk=inspection_id_b)
+
+    pairs = Inspection.pair_frames(inspection_a, inspection_b)
+    return render(request, 'compare.html', {
+        'inspection_a': inspection_a,
+        'inspection_b': inspection_b,
+        'pairs': pairs,
+    })
