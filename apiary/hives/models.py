@@ -10,6 +10,10 @@ class Hive(models.Model):
     def __str__(self):
         return "Hive %s" % self.name
 
+    @property
+    def inspections(self):
+        return self.inspection_set.order_by("-timestamp")
+
 class HiveBox(models.Model):
     hive = models.ForeignKey(Hive, on_delete=models.PROTECT)
     box_type = models.CharField(max_length=3, choices=( ('BRD', "Brood"), ('SPR', "Super") ))
@@ -57,7 +61,10 @@ class Inspection(models.Model):
         return pairs
 
     def list_notes(self):
-        return self.notes.split("\n")
+        try:
+            return self.notes.split("\n")
+        except:
+            return []
 
 class InspectionFrame(models.Model):
     inspection = models.ForeignKey(Inspection, on_delete=models.PROTECT)

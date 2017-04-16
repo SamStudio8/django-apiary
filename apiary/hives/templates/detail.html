@@ -3,31 +3,50 @@
 <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 <div class="container">
-{% if inspection %}
-    <h1>Inspection {{inspection.hive.name}}#{{ inspection.id }}</h1>
-    <h3>{{ inspection.timestamp }}</h3>
-    <hr>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Frame</th>
-                <th>Front</th>
-                <th>Back</th>
-                <th>Note</th>
-            </tr>
-        </thead>
-        <tbody>
-    {% for iframe in inspection.inspectionframe_set.all %}
+<h1>Inspection {{inspection.hive.name}}#{{ inspection.id }}</h1>
+<h3>{{ inspection.timestamp }}</h3>
+<ul>
+  {% for note in inspection.list_notes %}
+  <li>{{ note }}</li>
+  {% endfor %}
+</ul>
+
+<div class="row">
+    <div class="col-md-6 text-left">
+        {% with inspection.get_previous_by_timestamp as prev %}
+           {% if prev %}
+              &#9668; <a href="{% url 'hives:detail' prev.id %}">#{{ prev.id }}</a>  (<a href="{% url 'hives:compare' inspection.id prev.id %}">Compare</a>)
+           {% endif %}
+        {% endwith %}
+    </div>
+    <div class="col-md-6 text-right">
+        {% with inspection.get_next_by_timestamp as next %}
+           {% if next %}
+              <a href="{% url 'hives:detail' next.id %}">#{{ next.id }}</a>  (<a href="{% url 'hives:compare' inspection.id next.id %}">Compare</a>) &#9658;
+           {% endif %}
+        {% endwith %}
+    </div>
+</div>
+
+<hr>
+<table class="table">
+    <thead>
         <tr>
-            <td>{{ iframe.frame.code }}</td>
-            <td><img src="{% thumbnail iframe.img_front 350x233 crop %}" alt="" /></td>
-            <td><img src="{% thumbnail iframe.img_back 350x233 crop %}" alt="" /></td>
-            <td>{{ iframe.note }}</td>
+            <th>Frame</th>
+            <th>Front</th>
+            <th>Back</th>
+            <th>Note</th>
         </tr>
-    {% endfor %}
-        </tbody>
-    </table>
-{% else %}
-    <p>No inspection available.</p>
-{% endif %}
+    </thead>
+    <tbody>
+{% for iframe in inspection.inspectionframe_set.all %}
+    <tr>
+        <td>{{ iframe.frame.code }}</td>
+        <td><img src="{% thumbnail iframe.img_front 350x233 crop %}" alt="" /></td>
+        <td><img src="{% thumbnail iframe.img_back 350x233 crop %}" alt="" /></td>
+        <td>{{ iframe.note }}</td>
+    </tr>
+{% endfor %}
+    </tbody>
+</table>
 </div>

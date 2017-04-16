@@ -13,7 +13,7 @@
             </tr>
         </thead>
         <tbody>
-    {% for record in hive.inspection_set.all %}
+    {% for record in hive.inspections %}
         <tr>
             <td><a href="{% url 'hives:detail' record.id %}">{{ record.timestamp }}</a></td>
             <td>
