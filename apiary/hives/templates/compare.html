@@ -26,6 +26,33 @@
     </div>
 </div>
 
+<div class="row">
+    <div class="col-md-6 text-left">
+        {% with inspection_a.get_previous_by_timestamp as prev %}
+           {% if prev %}
+           &#9668; <a href="{% url 'hives:compare' prev.id inspection_b.id %}">#{{ prev.id }}</a>
+           {% endif %}
+        {% endwith %}
+        {% with inspection_a.get_next_by_timestamp as next %}
+           {% if next %}
+           <a href="{% url 'hives:compare' next.id inspection_b.id %}">#{{ next.id }}</a> &#9658;
+           {% endif %}
+        {% endwith %}
+    </div>
+    <div class="col-md-6 text-right">
+        {% with inspection_b.get_previous_by_timestamp as prev %}
+           {% if prev %}
+           &#9668; <a href="{% url 'hives:compare' inspection_a.id prev.id %}">#{{ prev.id }}</a>
+           {% endif %}
+        {% endwith %}
+        {% with inspection_b.get_next_by_timestamp as next %}
+           {% if next %}
+           <a href="{% url 'hives:compare' inspection_a.id next.id %}">#{{ next.id }}</a> &#9658;
+           {% endif %}
+        {% endwith %}
+    </div>
+</div>
+
 <hr>
 
 {% for code, pair in pairs.items %}
