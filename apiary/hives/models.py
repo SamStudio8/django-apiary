@@ -5,6 +5,7 @@ from filer.fields.image import FilerImageField
 
 class Hive(models.Model):
     name = models.CharField(max_length=50)
+    #queen
 
     def __str__(self):
         return "Hive %s" % self.name
@@ -13,7 +14,6 @@ class HiveBox(models.Model):
     hive = models.ForeignKey(Hive, on_delete=models.PROTECT)
     box_type = models.CharField(max_length=3, choices=( ('BRD', "Brood"), ('SPR', "Super") ))
 
-    #order
 
 class Frame(models.Model):
     box = models.ForeignKey(HiveBox, on_delete=models.PROTECT)
@@ -26,6 +26,7 @@ class Frame(models.Model):
 class Inspection(models.Model):
     hive = models.ForeignKey(Hive, on_delete=models.PROTECT)
     timestamp = models.DateTimeField()
+    notes = models.TextField(null=True, blank=True)
     #weather
     #report
 
