@@ -17,6 +17,7 @@ class Hive(models.Model):
 class HiveBox(models.Model):
     hive = models.ForeignKey(Hive, on_delete=models.PROTECT)
     box_type = models.CharField(max_length=3, choices=( ('BRD', "Brood"), ('SPR', "Super") ))
+    code = models.CharField(max_length=2)
 
 
 class Frame(models.Model):
@@ -24,8 +25,12 @@ class Frame(models.Model):
     code = models.CharField(max_length=1)
     order = models.PositiveSmallIntegerField()
 
+    @property
+    def full_code(self):
+        return "%s.%s" % (str(self.box.code), self.code)
+
     def __str__(self):
-        return self.code
+        return self.full_code
 
 class Inspection(models.Model):
     hive = models.ForeignKey(Hive, on_delete=models.PROTECT)
@@ -44,13 +49,13 @@ class Inspection(models.Model):
     def pair_frames(inspection_a, inspection_b):
         pairs = {}
         for iframe in inspection_a.get_frames_rname():
-            icode = iframe.frame.code
+            icode = iframe.frame.full_code
             pairs[icode] = [
                 iframe,
                 None
             ]
         for iframe in inspection_b.get_frames_rname():
-            icode = iframe.frame.code
+            icode = iframe.frame.full_code
             if icode in pairs:
                 pairs[icode][1] = iframe
             else:
