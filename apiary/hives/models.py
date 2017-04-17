@@ -19,6 +19,12 @@ class HiveBox(models.Model):
     box_type = models.CharField(max_length=3, choices=( ('BRD', "Brood"), ('SPR', "Super") ))
     code = models.CharField(max_length=2)
 
+    @property
+    def full_code(self):
+        return "%s.%s" % (str(self.hive.name), self.code)
+
+    def __str__(self):
+        return self.full_code
 
 class Frame(models.Model):
     box = models.ForeignKey(HiveBox, on_delete=models.PROTECT)
