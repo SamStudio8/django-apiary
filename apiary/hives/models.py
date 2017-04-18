@@ -88,12 +88,13 @@ class Inspection(models.Model):
         for ibox in boxes:
             boxcode = boxes[ibox]["code"]
             pairs[boxcode] = {}
-            for iframe in inspection_a.get_frames_rname(ibox):
+            for i, iframe in enumerate(inspection_a.get_frames_rname(ibox)):
                 if iframe.frame:
                     icode = iframe.frame.full_code
                     pairs[boxcode][icode] = [
                         iframe,
-                        None
+                        None,
+                        i,
                     ]
 
         boxes = inspection_b.boxes
@@ -101,7 +102,7 @@ class Inspection(models.Model):
             boxcode = boxes[ibox]["code"]
             if boxcode not in pairs:
                 pairs[boxcode] = {}
-            for iframe in inspection_b.get_frames_rname(ibox):
+            for i, iframe in enumerate(inspection_b.get_frames_rname(ibox)):
                 if iframe.frame:
                     icode = iframe.frame.full_code
                     if icode in pairs[boxcode]:
@@ -109,8 +110,12 @@ class Inspection(models.Model):
                     else:
                         pairs[boxcode][icode] = [
                             None,
-                            iframe
+                            iframe,
+                            i
                         ]
+
+        for box in pairs:
+            pairs[box] = sorted(pairs[box].items(), key=lambda (k,v):v[2])
         return pairs
 
     def list_notes(self):
