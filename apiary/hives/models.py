@@ -69,12 +69,14 @@ class Inspection(models.Model):
 
     @property
     def boxes(self):
+        #TODO Make this return the boxes
+        result = self.inspectionframe_set.values('boxpos__box','boxpos__box__code','boxpos__box__order').annotate(frame_count=Count('boxpos__box'))
         counts = {}
-        result = self.inspectionframe_set.values('boxpos__box__code','boxpos__box__order').annotate(frame_count=Count('boxpos__box'))
         for i, r in enumerate(result):
-            counts[r["boxpos__box__code"]] = {
+            counts[r["boxpos__box"]] = {
                 "count": r["frame_count"],
                 "order": r["boxpos__box__order"],
+                "code": r["boxpos__box__code"],
             }
         return counts
 
@@ -82,25 +84,30 @@ class Inspection(models.Model):
     def pair_frames(inspection_a, inspection_b):
         pairs = {}
 
-        for ibox in inspection_a.boxes:
-            pairs[ibox] = {}
+        boxes = inspection_a.boxes
+        for ibox in boxes:
+            boxcode = boxes[ibox]["code"]
+            pairs[boxcode] = {}
             for iframe in inspection_a.get_frames_rname(ibox):
                 if iframe.frame:
                     icode = iframe.frame.full_code
-                    pairs[ibox][icode] = [
+                    pairs[boxcode][icode] = [
                         iframe,
                         None
                     ]
-        for ibox in inspection_b.boxes:
+
+        boxes = inspection_b.boxes
+        for ibox in boxes:
+            boxcode = boxes[ibox]["code"]
             if ibox not in pairs:
-                pairs[ibox] = {}
+                pairs[boxcode] = {}
             for iframe in inspection_b.get_frames_rname(ibox):
                 if iframe.frame:
                     icode = iframe.frame.full_code
                     if icode in pairs:
-                        pairs[ibox][icode][1] = iframe
+                        pairs[boxcode][icode][1] = iframe
                     else:
-                        pairs[ibox][icode] = [
+                        pairs[boxcode][icode] = [
                             None,
                             iframe
                         ]
