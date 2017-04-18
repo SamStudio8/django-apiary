@@ -99,7 +99,7 @@ class Inspection(models.Model):
         boxes = inspection_b.boxes
         for ibox in boxes:
             boxcode = boxes[ibox]["code"]
-            if ibox not in pairs:
+            if boxcode not in pairs:
                 pairs[boxcode] = {}
             for iframe in inspection_b.get_frames_rname(ibox):
                 if iframe.frame:
