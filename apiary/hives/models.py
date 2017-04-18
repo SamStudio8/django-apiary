@@ -65,7 +65,7 @@ class Inspection(models.Model):
         return "%s: %s" % (self.stand.name, self.timestamp.date())
 
     def get_frames_rname(self, box_id):
-        return self.inspectionframe_set.filter(boxpos__box__id=box_id).order_by("frame__code")
+        return self.inspectionframe_set.filter(boxpos__box__id=box_id).order_by("boxpos__order")
 
     @property
     def boxes(self):
