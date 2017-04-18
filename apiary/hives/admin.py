@@ -33,14 +33,15 @@ class InspectionAdmin(admin.ModelAdmin):
 
     def save_model(self, request, obj, form, change):
         for iframe in obj.inspectionframe_set.all():
-            iframe.frame.current_boxpos = iframe.boxpos
-            iframe.frame.save()
+            if iframe.frame:
+                iframe.frame.current_boxpos = iframe.boxpos
+                iframe.frame.save()
         super(InspectionAdmin, self).save_model(request, obj, form, change)
 
 class FrameAdmin(admin.ModelAdmin):
     inlines = []
     list_display = ('full_code', 'current_boxpos')
-    list_filter = ('current_boxpos__box',)
+    list_filter = ('current_boxpos__box', 'current_boxpos__box__stand',)
 
 admin.site.register(Stand, StandAdmin)
 admin.site.register(Box, BoxAdmin)
