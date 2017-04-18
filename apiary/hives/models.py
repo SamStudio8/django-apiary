@@ -93,16 +93,16 @@ class Inspection(models.Model):
     def pair_frames(inspection_a, inspection_b):
         pairs = {}
 
-        boxes = inspection_b.boxes
+        boxes = inspection_a.boxes
         for ibox in boxes:
             boxcode = boxes[ibox]["code"]
             pairs[boxcode] = {}
-            for i, iframe in enumerate(inspection_b.get_box_frames_rname(ibox)):
+            for i, iframe in enumerate(inspection_a.get_box_frames_rname(ibox)):
                 if iframe.frame:
                     icode = iframe.frame.full_code
                     pairs[boxcode][icode] = [
-                        inspection_a.get_frame_by_id(iframe.frame.id),
                         iframe,
+                        inspection_b.get_frame_by_id(iframe.frame.id),
                         i,
                     ]
 
