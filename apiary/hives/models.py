@@ -27,7 +27,7 @@ class Queen(models.Model):
     born = models.DateField()
     breeder = models.CharField(max_length=32)
     price = models.FloatField()
-    stand = models.ForeignKey(Stand, on_delete=models.PROTECT, null=True, blank=True)
+    stand = models.OneToOneField(Stand, on_delete=models.PROTECT, null=True, blank=True)
 
     def __str__(self):
         return "%s (%d)" % (self.name, self.born.year)
