@@ -8,7 +8,9 @@ def make_boxpos_stubs(apps, editor):
     BoxPos = apps.get_model("hives", "BoxPosition")
     InspectionFrame = apps.get_model("hives", "InspectionFrame")
     for iframe in InspectionFrame.objects.all():
-        iframe.boxpos = BoxPos.objects.get_or_create(box__id=iframe.frame.box.id, order=0, code="?")[0]
+        bp = BoxPos.objects.get_or_create(box_id=iframe.frame.box.id, order=0, code="?")[0]
+        bp.save()
+        iframe.boxpos = bp
         iframe.save()
 
 class Migration(migrations.Migration):
