@@ -46,7 +46,7 @@ class BoxPosition(models.Model):
 
     @property
     def full_code(self):
-        return "%s %s.%s" % (self.box.box_type, self.box.code, self.code)
+        return "%s %s.%s" % (self.box.box_type, self.box.code, self.order)
 
     def __str__(self):
         return self.full_code
