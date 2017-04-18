@@ -1,9 +1,13 @@
 from django.contrib import admin
 
-from .models import Hive, HiveBox, Frame, Inspection, InspectionFrame
+from .models import Stand, Box, BoxPosition, Frame, Inspection, InspectionFrame
 
-class HiveBoxInline(admin.StackedInline):
-    model = HiveBox
+class BoxPosInline(admin.TabularInline):
+    model = BoxPosition
+    extra = 1
+
+class BoxInline(admin.StackedInline):
+    model = Box
     extra = 1
 
 class FrameInline(admin.StackedInline):
@@ -14,16 +18,20 @@ class InspectionFrameInline(admin.TabularInline):
     model = InspectionFrame
     extra = 1
 
-class HiveAdmin(admin.ModelAdmin):
-    inlines = [HiveBoxInline]
+class StandAdmin(admin.ModelAdmin):
+    inlines = [BoxInline]
 
-class HiveBoxAdmin(admin.ModelAdmin):
-    inlines = [FrameInline]
+class BoxAdmin(admin.ModelAdmin):
+    inlines = [BoxPosInline]
 
 class InspectionAdmin(admin.ModelAdmin):
     inlines = [InspectionFrameInline]
 
-admin.site.register(Hive, HiveAdmin)
-admin.site.register(HiveBox, HiveBoxAdmin)
+class FrameAdmin(admin.ModelAdmin):
+    inlines = []
+
+admin.site.register(Stand, StandAdmin)
+admin.site.register(Box, BoxAdmin)
 admin.site.register(Inspection, InspectionAdmin)
+admin.site.register(Frame, FrameAdmin)
 
