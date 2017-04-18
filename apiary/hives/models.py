@@ -15,6 +15,23 @@ class Stand(models.Model):
     def inspections(self):
         return self.inspection_set.order_by("-timestamp")
 
+class Queen(models.Model):
+    name = models.CharField(max_length=50)
+    mark = models.CharField(max_length=1, choices=(
+        ('W', "White ('1 or '6)"),
+        ('Y', "Yellow ('2 or '7)"),
+        ('R', "Red ('3 or '8)"),
+        ('G', "Green ('4 or '9)"),
+        ('B', "Blue ('5 or '0)"),
+    ))
+    born = models.DateField()
+    breeder = models.CharField(max_length=32)
+    price = models.FloatField()
+    stand = models.ForeignKey(Stand, on_delete=models.PROTECT, null=True, blank=True)
+
+    def __str__(self):
+        return "%s (%d)" % (self.name, self.born.year)
+
 class Box(models.Model):
     stand = models.ForeignKey(Stand, on_delete=models.PROTECT)
     box_type = models.CharField(max_length=3, choices=( ('BRD', "Brood"), ('SPR', "Super") ))

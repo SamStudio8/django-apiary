@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Stand, Box, BoxPosition, Frame, Inspection, InspectionFrame
+from .models import Stand, Box, BoxPosition, Frame, Inspection, InspectionFrame, Queen
 
 class BoxPosInline(admin.TabularInline):
     model = BoxPosition
@@ -17,6 +17,10 @@ class FrameInline(admin.StackedInline):
 class InspectionFrameInline(admin.TabularInline):
     model = InspectionFrame
     extra = 1
+
+class QueenAdmin(admin.ModelAdmin):
+    inlines = []
+    list_display = ('__str__', 'mark', 'stand')
 
 class StandAdmin(admin.ModelAdmin):
     inlines = [BoxInline]
@@ -42,4 +46,5 @@ admin.site.register(Stand, StandAdmin)
 admin.site.register(Box, BoxAdmin)
 admin.site.register(Inspection, InspectionAdmin)
 admin.site.register(Frame, FrameAdmin)
+admin.site.register(Queen, QueenAdmin)
 
