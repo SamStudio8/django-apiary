@@ -30,8 +30,10 @@ class Box(models.Model):
 
 class Frame(models.Model):
     code = models.CharField(max_length=1)
+    current_boxpos = models.ForeignKey("BoxPosition", on_delete=models.PROTECT, blank=True, null=True)
     #supplier
     #date ordered/fitted
+    #active = models.BooleanField()
 
     @property
     def full_code(self):
@@ -47,7 +49,7 @@ class BoxPosition(models.Model):
 
     @property
     def full_code(self):
-        return "%s %s.%s" % (self.box.box_type, self.box.code, self.order)
+        return "%s.%s.%s" % (self.box.stand.name, self.box.order, self.order)
 
     def __str__(self):
         return self.full_code
@@ -56,6 +58,7 @@ class Inspection(models.Model):
     stand = models.ForeignKey(Stand, on_delete=models.PROTECT)
     timestamp = models.DateTimeField()
     notes = models.TextField(null=True, blank=True)
+
     #weather
     #report
     #temperament scale
@@ -124,4 +127,6 @@ class InspectionFrame(models.Model):
     #store = models.NullBooleanField()
     #brood = models.NullBooleanField()
     #cover = models.FloatField(blank=True)
+    class Meta:
+        get_latest_by = 'inspection__timestamp'
 
