@@ -104,7 +104,7 @@ class Inspection(models.Model):
             for iframe in inspection_b.get_frames_rname(ibox):
                 if iframe.frame:
                     icode = iframe.frame.full_code
-                    if icode in pairs:
+                    if icode in pairs[boxcode]:
                         pairs[boxcode][icode][1] = iframe
                     else:
                         pairs[boxcode][icode] = [
