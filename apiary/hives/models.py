@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from django.db.models import Count
 from filer.fields.image import FilerImageField
 
 class Stand(models.Model):
@@ -63,27 +64,46 @@ class Inspection(models.Model):
     def __str__(self):
         return "%s: %s" % (self.stand.name, self.timestamp.date())
 
-    def get_frames_rname(self):
-        return self.inspectionframe_set.order_by("frame__code")
+    def get_frames_rname(self, box_id):
+        return self.inspectionframe_set.filter(boxpos__box__id=box_id).order_by("frame__code")
+
+    @property
+    def boxes(self):
+        counts = {}
+        result = self.inspectionframe_set.values('boxpos__box__code','boxpos__box__order').annotate(frame_count=Count('boxpos__box'))
+        for i, r in enumerate(result):
+            counts[r["boxpos__box__code"]] = {
+                "count": r["frame_count"],
+                "order": r["boxpos__box__order"],
+            }
+        return counts
 
     @staticmethod
     def pair_frames(inspection_a, inspection_b):
         pairs = {}
-        for iframe in inspection_a.get_frames_rname():
-            icode = iframe.frame.full_code
-            pairs[icode] = [
-                iframe,
-                None
-            ]
-        for iframe in inspection_b.get_frames_rname():
-            icode = iframe.frame.full_code
-            if icode in pairs:
-                pairs[icode][1] = iframe
-            else:
-                pairs[icode] = [
-                    None,
-                    iframe
-                ]
+
+        for ibox in inspection_a.boxes:
+            pairs[ibox] = {}
+            for iframe in inspection_a.get_frames_rname(ibox):
+                if iframe.frame:
+                    icode = iframe.frame.full_code
+                    pairs[ibox][icode] = [
+                        iframe,
+                        None
+                    ]
+        for ibox in inspection_b.boxes:
+            if ibox not in pairs:
+                pairs[ibox] = {}
+            for iframe in inspection_b.get_frames_rname(ibox):
+                if iframe.frame:
+                    icode = iframe.frame.full_code
+                    if icode in pairs:
+                        pairs[ibox][icode][1] = iframe
+                    else:
+                        pairs[ibox][icode] = [
+                            None,
+                            iframe
+                        ]
         return pairs
 
     def list_notes(self):
