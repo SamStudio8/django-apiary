@@ -64,8 +64,14 @@ class Inspection(models.Model):
     def __str__(self):
         return "%s: %s" % (self.stand.name, self.timestamp.date())
 
-    def get_frames_rname(self, box_id):
+    def get_box_frames_rname(self, box_id):
         return self.inspectionframe_set.filter(boxpos__box__id=box_id).order_by("boxpos__order")
+
+    def get_frame_by_id(self, frame_id):
+        try:
+            return self.inspectionframe_set.get(frame_id=frame_id)
+        except:
+            return None
 
     @property
     def boxes(self):
@@ -84,35 +90,18 @@ class Inspection(models.Model):
     def pair_frames(inspection_a, inspection_b):
         pairs = {}
 
-        boxes = inspection_a.boxes
-        for ibox in boxes:
-            boxcode = boxes[ibox]["code"]
-            pairs[boxcode] = {}
-            for i, iframe in enumerate(inspection_a.get_frames_rname(ibox)):
-                if iframe.frame:
-                    icode = iframe.frame.full_code
-                    pairs[boxcode][icode] = [
-                        iframe,
-                        None,
-                        i,
-                    ]
-
         boxes = inspection_b.boxes
         for ibox in boxes:
             boxcode = boxes[ibox]["code"]
-            if boxcode not in pairs:
-                pairs[boxcode] = {}
-            for i, iframe in enumerate(inspection_b.get_frames_rname(ibox)):
+            pairs[boxcode] = {}
+            for i, iframe in enumerate(inspection_b.get_box_frames_rname(ibox)):
                 if iframe.frame:
                     icode = iframe.frame.full_code
-                    if icode in pairs[boxcode]:
-                        pairs[boxcode][icode][1] = iframe
-                    else:
-                        pairs[boxcode][icode] = [
-                            None,
-                            iframe,
-                            i
-                        ]
+                    pairs[boxcode][icode] = [
+                        inspection_a.get_frame_by_id(iframe.frame.id),
+                        iframe,
+                        i,
+                    ]
 
         for box in pairs:
             pairs[box] = sorted(pairs[box].items(), key=lambda (k,v):v[2])
