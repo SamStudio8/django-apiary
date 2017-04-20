@@ -94,6 +94,9 @@ class Inspection(models.Model):
         except:
             return None
 
+    class Meta:
+        get_latest_by = 'timestamp'
+
     @property
     def boxes(self):
         #TODO Make this return the boxes

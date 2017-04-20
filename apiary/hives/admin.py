@@ -32,14 +32,18 @@ class InspectionAdmin(admin.ModelAdmin):
     inlines = [InspectionFrameInline]
 
     def save_model(self, request, obj, form, change):
-        for iframe in obj.inspectionframe_set.all():
-            if iframe.frame:
-                if iframe.new_boxpos:
-                    iframe.frame.current_boxpos = iframe.new_boxpos
-                    iframe.frame.save()
-                else:
-                    iframe.frame.current_boxpos = iframe.boxpos
-                    iframe.frame.save()
+        latest = Inspection.objects.latest()
+        if obj.timestamp >= latest.timestamp:
+            # If the inspection is newer or at least as old as the latest inspection
+            # update the locations of the frames
+            for iframe in obj.inspectionframe_set.all():
+                if iframe.frame:
+                    if iframe.new_boxpos:
+                        iframe.frame.current_boxpos = iframe.new_boxpos
+                        iframe.frame.save()
+                    else:
+                        iframe.frame.current_boxpos = iframe.boxpos
+                        iframe.frame.save()
         super(InspectionAdmin, self).save_model(request, obj, form, change)
 
 class FrameAdmin(admin.ModelAdmin):
