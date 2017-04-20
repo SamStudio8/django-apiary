@@ -142,8 +142,11 @@ class InspectionFrame(models.Model):
     img_back = FilerImageField(related_name="frame_backs", blank=True, null=True)
     note = models.TextField(null=True, blank=True)
 
+    new_boxpos = models.ForeignKey(BoxPosition, on_delete=models.PROTECT, blank=True, null=True, related_name="manipulations")
+    removed = models.BooleanField(default=False)
+
     #store = models.NullBooleanField()
-    #brood = models.NullBooleanField()
+    brood = models.NullBooleanField()
     #cover = models.FloatField(blank=True)
     class Meta:
         get_latest_by = 'inspection__timestamp'

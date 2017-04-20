@@ -34,8 +34,12 @@ class InspectionAdmin(admin.ModelAdmin):
     def save_model(self, request, obj, form, change):
         for iframe in obj.inspectionframe_set.all():
             if iframe.frame:
-                iframe.frame.current_boxpos = iframe.boxpos
-                iframe.frame.save()
+                if iframe.new_boxpos:
+                    iframe.frame.current_boxpos = iframe.new_boxpos
+                    iframe.frame.save()
+                else:
+                    iframe.frame.current_boxpos = iframe.boxpos
+                    iframe.frame.save()
         super(InspectionAdmin, self).save_model(request, obj, form, change)
 
 class FrameAdmin(admin.ModelAdmin):
