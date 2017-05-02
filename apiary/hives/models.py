@@ -34,17 +34,29 @@ class Queen(models.Model):
         return "%s (%d)" % (self.name, self.born.year)
 
 class Box(models.Model):
-    stand = models.ForeignKey(Stand, on_delete=models.PROTECT)
+    current_stand = models.ForeignKey(Stand, on_delete=models.PROTECT)
+    current_order = models.PositiveSmallIntegerField()
+
     box_type = models.CharField(max_length=3, choices=( ('BRD', "Brood"), ('SPR', "Super") ))
     code = models.CharField(max_length=2)
-    order = models.PositiveSmallIntegerField()
 
     @property
     def full_code(self):
-        return "%s.%s%s" % (self.stand.name, self.box_type, self.code)
+        #return "%s.%s%s" % (self.current_stand.name, self.box_type, self.code)
+        return "%s%s" % (self.box_type, self.code)
 
     def __str__(self):
         return self.full_code
+
+class BoxHistory(models.Model):
+    box = models.ForeignKey(Box, on_delete=models.PROTECT)
+    stand = models.ForeignKey(Stand, on_delete=models.PROTECT)
+    order = models.PositiveSmallIntegerField()
+    timestamp = models.DateTimeField()
+
+    class Meta:
+        get_latest_by = 'timestamp'
+
 
 class Frame(models.Model):
     code = models.CharField(max_length=1)
@@ -67,7 +79,7 @@ class BoxPosition(models.Model):
 
     @property
     def full_code(self):
-        return "%s.%s.%s" % (self.box.stand.name, self.box.order, self.order)
+        return "%s.%s.%s" % (self.box.current_stand.name, self.box.current_order, self.order)
 
     def __str__(self):
         return self.full_code
