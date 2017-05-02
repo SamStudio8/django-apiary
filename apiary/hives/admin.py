@@ -1,7 +1,7 @@
 from django.contrib import admin
 import datetime
 
-from .models import Stand, Box, InspectionBox, BoxPosition, Frame, Inspection, InspectionFrame, Queen
+from .models import Stand, Box, InspectionBox, BoxPosition, Frame, FramePack, Inspection, InspectionFrame, Queen
 
 class InspectionBoxInline(admin.TabularInline):
     model = InspectionBox
@@ -19,9 +19,11 @@ class BoxInline(admin.TabularInline):
     def has_add_permission(self, request):
         return False
 
-class FrameInline(admin.StackedInline):
+class FrameInline(admin.TabularInline):
+    #readonly_fields = ["id", "code", "current_boxpos"]
     model = Frame
-    extra = 1
+    extra = 0
+    can_delete = False
 
 class InspectionFrameInline(admin.TabularInline):
     model = InspectionFrame
@@ -54,9 +56,14 @@ class FrameAdmin(admin.ModelAdmin):
     list_display = ('full_code', 'current_boxpos')
     list_filter = ('current_boxpos__box', 'current_boxpos__box__current_stand',)
 
+class FramePackAdmin(admin.ModelAdmin):
+    inlines = [FrameInline]
+
+
 admin.site.register(Stand, StandAdmin)
 admin.site.register(Box, BoxAdmin)
 admin.site.register(Inspection, InspectionAdmin)
 admin.site.register(Frame, FrameAdmin)
+admin.site.register(FramePack, FramePackAdmin)
 admin.site.register(Queen, QueenAdmin)
 

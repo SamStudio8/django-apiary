@@ -56,6 +56,9 @@ class FramePack(models.Model):
     supplier = models.CharField(max_length=24, blank=True, null=True)
     ordered = models.DateField(blank=True, null=True)
 
+    def __str__(self):
+        return "%s (%s)" % (self.ordered, self.supplier)
+
 
 class Frame(models.Model):
     pack = models.ForeignKey(FramePack, on_delete=models.PROTECT, blank=True, null=True)
