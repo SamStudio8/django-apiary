@@ -97,6 +97,28 @@ class Inspection(models.Model):
         except:
             return None
 
+    @staticmethod
+    def my_post_save(pk):
+        latest = Inspection.objects.latest()
+        instance = Inspection.objects.get(pk=pk)
+        if instance.timestamp >= latest.timestamp:
+            # If the inspection is newer or at least as old as the latest inspection
+            # update the locations of the frames
+            for iframe in instance.inspectionframe_set.all():
+                if iframe.frame:
+                    if iframe.new_boxpos:
+                        iframe.frame.current_boxpos = iframe.new_boxpos
+                        iframe.frame.save()
+                    else:
+                        iframe.frame.current_boxpos = iframe.boxpos
+                        iframe.frame.save()
+
+            for box in instance.inspectionbox_set.all():
+                box.box.current_stand = box.stand
+                box.box.current_order = box.order
+                box.box.save()
+
+
     class Meta:
         get_latest_by = 'timestamp'
 

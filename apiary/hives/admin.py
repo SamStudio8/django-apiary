@@ -37,31 +37,17 @@ class StandAdmin(admin.ModelAdmin):
 class BoxAdmin(admin.ModelAdmin):
     inlines = [BoxPosInline, InspectionBoxInline]
 
-    def save_model(self, request, obj, form, change):
-        latest = obj.boxhistory_set.latest()
-
-        if latest.stand != obj.current_stand or latest.order != obj.current_order:
-            bh = BoxHistory(box_id=obj.id, stand_id=obj.current_stand.id, order=obj.current_order,timestamp=datetime.datetime.now())
-            bh.save()
-        super(BoxAdmin, self).save_model(request, obj, form, change)
-
 class InspectionAdmin(admin.ModelAdmin):
     inlines = [InspectionBoxInline, InspectionFrameInline]
 
-    def save_model(self, request, obj, form, change):
-        latest = Inspection.objects.latest()
-        if obj.timestamp >= latest.timestamp:
-            # If the inspection is newer or at least as old as the latest inspection
-            # update the locations of the frames
-            for iframe in obj.inspectionframe_set.all():
-                if iframe.frame:
-                    if iframe.new_boxpos:
-                        iframe.frame.current_boxpos = iframe.new_boxpos
-                        iframe.frame.save()
-                    else:
-                        iframe.frame.current_boxpos = iframe.boxpos
-                        iframe.frame.save()
-        super(InspectionAdmin, self).save_model(request, obj, form, change)
+    def save_formset(self, request, form, formset, change):
+        instances = formset.save(commit=False)
+        for obj in formset.deleted_objects:
+            obj.delete()
+        for instance in instances:
+            instance.save()
+        formset.save_m2m()
+        Inspection.my_post_save(form.instance.pk)
 
 class FrameAdmin(admin.ModelAdmin):
     inlines = []
