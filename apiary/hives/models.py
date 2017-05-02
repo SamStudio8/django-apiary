@@ -65,6 +65,8 @@ class Frame(models.Model):
 
     @property
     def full_code(self):
+        if not self.code:
+            return "#%d" % (self.id)
         return "#%d.%s" % (self.id, self.code)
 
     def __str__(self):
