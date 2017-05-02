@@ -43,20 +43,10 @@ class Box(models.Model):
     @property
     def full_code(self):
         #return "%s.%s%s" % (self.current_stand.name, self.box_type, self.code)
-        return "%s%s" % (self.box_type, self.code)
+        return "%s-%s" % (self.box_type, self.code)
 
     def __str__(self):
         return self.full_code
-
-class BoxHistory(models.Model):
-    box = models.ForeignKey(Box, on_delete=models.PROTECT)
-    stand = models.ForeignKey(Stand, on_delete=models.PROTECT)
-    order = models.PositiveSmallIntegerField()
-    timestamp = models.DateTimeField()
-
-    class Meta:
-        get_latest_by = 'timestamp'
-
 
 class Frame(models.Model):
     code = models.CharField(max_length=1)
@@ -79,7 +69,8 @@ class BoxPosition(models.Model):
 
     @property
     def full_code(self):
-        return "%s.%s.%s" % (self.box.current_stand.name, self.box.current_order, self.order)
+        #return "%s.%s.%s" % (self.box.current_stand.name, self.box.current_order, self.order)
+        return "%s.%s" % (self.box.full_code, self.order)
 
     def __str__(self):
         return self.full_code
@@ -165,4 +156,18 @@ class InspectionFrame(models.Model):
     #cover = models.FloatField(blank=True)
     class Meta:
         get_latest_by = 'inspection__timestamp'
+
+class InspectionBox(models.Model):
+    inspection = models.ForeignKey(Inspection, on_delete=models.PROTECT)
+    box = models.ForeignKey(Box, on_delete=models.PROTECT)
+    stand = models.ForeignKey(Stand, on_delete=models.PROTECT)
+    order = models.PositiveSmallIntegerField()
+
+    @property
+    def timestamp(self):
+        return self.inspection.timestamp
+
+    class Meta:
+        get_latest_by = 'timestamp'
+
 

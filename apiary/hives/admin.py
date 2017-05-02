@@ -1,15 +1,11 @@
 from django.contrib import admin
 import datetime
 
-from .models import Stand, Box, BoxHistory, BoxPosition, Frame, Inspection, InspectionFrame, Queen
+from .models import Stand, Box, InspectionBox, BoxPosition, Frame, Inspection, InspectionFrame, Queen
 
-class BoxHistInline(admin.TabularInline):
-    readonly_fields = ["stand", "order"]
-    model = BoxHistory
+class InspectionBoxInline(admin.TabularInline):
+    model = InspectionBox
     extra = 0
-    can_delete = False
-    def has_add_permission(self, request):
-        return False
 
 class BoxPosInline(admin.TabularInline):
     model = BoxPosition
@@ -39,7 +35,7 @@ class StandAdmin(admin.ModelAdmin):
     inlines = [BoxInline]
 
 class BoxAdmin(admin.ModelAdmin):
-    inlines = [BoxPosInline, BoxHistInline]
+    inlines = [BoxPosInline, InspectionBoxInline]
 
     def save_model(self, request, obj, form, change):
         latest = obj.boxhistory_set.latest()
@@ -50,7 +46,7 @@ class BoxAdmin(admin.ModelAdmin):
         super(BoxAdmin, self).save_model(request, obj, form, change)
 
 class InspectionAdmin(admin.ModelAdmin):
-    inlines = [InspectionFrameInline]
+    inlines = [InspectionBoxInline, InspectionFrameInline]
 
     def save_model(self, request, obj, form, change):
         latest = Inspection.objects.latest()
