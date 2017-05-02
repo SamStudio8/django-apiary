@@ -48,11 +48,19 @@ class Box(models.Model):
     def __str__(self):
         return self.full_code
 
+class FramePack(models.Model):
+    frame_type = models.CharField(max_length=1, choices=(
+        ('D', "Deep"),
+        ('S', "Shallow"),
+    ))
+    supplier = models.CharField(max_length=24, blank=True, null=True)
+    ordered = models.DateField(blank=True, null=True)
+
+
 class Frame(models.Model):
-    code = models.CharField(max_length=1)
+    pack = models.ForeignKey(FramePack, on_delete=models.PROTECT, blank=True, null=True)
+    code = models.CharField(max_length=1, blank=True, null=True)
     current_boxpos = models.ForeignKey("BoxPosition", on_delete=models.PROTECT, blank=True, null=True)
-    #supplier
-    #date ordered/fitted
     #active = models.BooleanField()
 
     @property
