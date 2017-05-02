@@ -125,12 +125,12 @@ class Inspection(models.Model):
     @property
     def boxes(self):
         #TODO Make this return the boxes
-        result = self.inspectionframe_set.values('boxpos__box','boxpos__box__code','boxpos__box__order').annotate(frame_count=Count('boxpos__box'))
+        result = self.inspectionframe_set.values('boxpos__box','boxpos__box__code','boxpos__box__current_order').annotate(frame_count=Count('boxpos__box'))
         counts = {}
         for i, r in enumerate(result):
             counts[r["boxpos__box"]] = {
                 "count": r["frame_count"],
-                "order": r["boxpos__box__order"],
+                "order": r["boxpos__box__current_order"],
                 "code": r["boxpos__box__code"],
             }
         return counts
