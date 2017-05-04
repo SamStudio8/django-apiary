@@ -53,8 +53,8 @@ class InspectionAdmin(admin.ModelAdmin):
 
 class FrameAdmin(admin.ModelAdmin):
     inlines = []
-    list_display = ('full_code', 'current_boxpos')
-    list_filter = ('current_boxpos__box', 'current_boxpos__box__current_stand',)
+    list_display = ('full_code', 'current_boxpos', 'pack')
+    list_filter = ('pack__frame_type', 'current_boxpos__box', 'current_boxpos__box__current_stand', 'pack__supplier')
 
 class FramePackAdmin(admin.ModelAdmin):
     inlines = [FrameInline]

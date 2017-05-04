@@ -57,7 +57,7 @@ class FramePack(models.Model):
     ordered = models.DateField(blank=True, null=True)
 
     def __str__(self):
-        return "%s (%s)" % (self.ordered, self.supplier)
+        return "%s:%d |%s (%s)" % (self.frame_type, len(self.frame_set.all()), self.ordered, self.supplier)
 
 
 class Frame(models.Model):
@@ -71,6 +71,13 @@ class Frame(models.Model):
         if not self.code:
             return "#%d" % (self.id)
         return "#%d.%s" % (self.id, self.code)
+
+    @property
+    def supplier(self):
+        if self.pack:
+            return pack.supplier
+        else:
+            return "Unknown"
 
     def __str__(self):
         return self.full_code
