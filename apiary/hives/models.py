@@ -108,6 +108,12 @@ class Inspection(models.Model):
     def __str__(self):
         return "%s: %s" % (self.stand.name, self.timestamp.date())
 
+    def get_next_inspection(self):
+        return self.get_next_by_timestamp(stand_id=self.stand.id)
+
+    def get_previous_inspection(self):
+        return self.get_previous_by_timestamp(stand_id=self.stand.id)
+
     def get_box_frames_rname(self, box_id):
         return self.inspectionframe_set.filter(boxpos__box__id=box_id).order_by("boxpos__order")
 
