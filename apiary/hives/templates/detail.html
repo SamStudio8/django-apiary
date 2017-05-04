@@ -13,14 +13,14 @@
 
 <div class="row">
     <div class="col-md-6 text-left">
-        {% with inspection.get_previous_by_timestamp as prev %}
+        {% with inspection.get_previous_inspection as prev %}
            {% if prev %}
               &#9668; <a href="{% url 'hives:detail' prev.id %}">#{{ prev.id }}</a>  (<a href="{% url 'hives:compare' inspection.id prev.id %}">Compare</a>)
            {% endif %}
         {% endwith %}
     </div>
     <div class="col-md-6 text-right">
-        {% with inspection.get_next_by_timestamp as next %}
+        {% with inspection.get_next_inspection as next %}
            {% if next %}
               <a href="{% url 'hives:detail' next.id %}">#{{ next.id }}</a>  (<a href="{% url 'hives:compare' inspection.id next.id %}">Compare</a>) &#9658;
            {% endif %}
